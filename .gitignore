@@ -1,4 +1,10 @@
 <<<<<<< HEAD
+# IntelliJ IDE files
+.idea/
+
+# Compiled Solidity files.
+src/abis/
+
 # Logs
 logs
 *.log
