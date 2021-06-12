@@ -61,7 +61,25 @@ contract TokenFarm {
     } // stakeTokens()
 
 
-    // @todo 2. Unstake Tokens (Withdraw)..
+    /**************************************************************************
+    * @notice This function will allow an investor to unstake their tokens.
+    **************************************************************************/
+    function unstakeTokens() public {
+        // Retrieve the investor's balance...
+        uint balance = stakingBalance[msg.sender];
+
+        // ...make sure its more then zero!...
+        require(balance > 0, "amount to stake must be greater then zero.");
+
+        // ...then return their Dai from the contract...
+        daiToken.transfer(msg.sender, balance);
+
+        // ...and record the fact their balance is now zero...
+        stakingBalance[msg.sender] = 0;
+
+        // ...and finally update their staking status.
+        isStaking[msg.sender] = false;
+    } // unstakeTokens()
 
 
     /**************************************************************************
