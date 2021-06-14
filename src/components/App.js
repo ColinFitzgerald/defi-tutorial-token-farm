@@ -2,6 +2,7 @@
 import React, {Component} from 'react'
 import Web3 from "web3";
 import Navbar from './Navbar'
+import Main from './Main'
 import './App.css'
 
 // Import project libraries.
@@ -114,9 +115,51 @@ class App extends Component {
 
 
     /**************************************************************************
+     * @notice
+     * @param amount
+     *************************************************************************/
+    stakeTokens = (amount) => {
+        this.setState({ loading: true })
+        this.state.daiToken.methods.approve(this.state.tokenFarm._address, amount).send({ from: this.state.account }).on('transactionHash', (hash) => {
+            this.state.tokenFarm.methods.stakeTokens(amount).send({ from: this.state.account }).on('transactionHash', (hash) => {
+                this.setState({ loading: false })
+            })
+        })
+    } // stakeTokens
+
+
+    /**************************************************************************
+     * @notice
+     * @param amount
+     *************************************************************************/
+    unstakeTokens = (amount) => {
+        this.setState({ loading: true })
+        this.state.tokenFarm.methods.unstakeTokens().send({ from: this.state.account }).on('transactionHash', (hash) => {
+            this.setState({ loading: false })
+        })
+    }
+
+
+    /**************************************************************************
      * @notice App's main render function!
      *************************************************************************/
     render() {
+        // Create a variable to hold our main UI...
+        let content
+
+        // ...but don't show it until its done loading.
+        if (this.state.loading) {
+            content = <p id="loading" className="text-center">Loading...</p>
+        } else {
+            content = <Main
+                daiTokenBalance={this.state.daiTokenBalance}
+                dappTokenBalance={this.state.dappTokenBalance}
+                stakingBalance={this.state.stakingBalance}
+                stakeTokens={this.stakeTokens}
+                unstakeTokens={this.unstakeTokens}
+            />
+        }
+
         return (
             // @todo Yikes! The nesting...
             <div>
@@ -131,7 +174,9 @@ class App extends Component {
                                     rel="noopener noreferrer"
                                 >
                                 </a>
-                                <h1>Hello, World!</h1>
+
+                                {content}
+
                             </div>
                         </main>
                     </div>
